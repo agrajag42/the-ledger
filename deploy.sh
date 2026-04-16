@@ -62,3 +62,20 @@ SERVICE_URL=$(gcloud run services describe "${SERVICE_NAME}" \
 echo ""
 echo "Deployed! Service URL: ${SERVICE_URL}"
 echo "Ledger available at: ${SERVICE_URL}/friends/ledger"
+
+# Register in site manifest
+SITE_PATH="/friends/ledger"
+SITE_LABEL="the-ledger"
+SITE_MIN_TIER="friends"
+MANIFEST_BUCKET="gs://ethanpease-site-manifest"
+echo "Updating site manifest..."
+gcloud storage cp "${MANIFEST_BUCKET}/manifest.json" /tmp/manifest.json 2>/dev/null || echo '{"sites":[]}' > /tmp/manifest.json
+python3 -c "
+import json
+m = json.load(open('/tmp/manifest.json'))
+entry = {'path': '${SITE_PATH}', 'label': '${SITE_LABEL}', 'min_tier': '${SITE_MIN_TIER}'}
+m['sites'] = [s for s in m['sites'] if s['path'] != entry['path']] + [entry]
+json.dump(m, open('/tmp/manifest.json', 'w'), indent=2)
+"
+gcloud storage cp /tmp/manifest.json "${MANIFEST_BUCKET}/manifest.json"
+echo "Manifest updated."
