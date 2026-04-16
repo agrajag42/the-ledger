@@ -64,7 +64,7 @@ echo "Deployed! Service URL: ${SERVICE_URL}"
 echo "Ledger available at: ${SERVICE_URL}/friends/ledger"
 
 # Register in site manifest
-SITE_PATH="/friends/ledger"
+SITE_PATH="/apps/ledger"
 SITE_LABEL="the-ledger"
 SITE_MIN_TIER="friends"
 MANIFEST_BUCKET="gs://ethanpease-site-manifest"
